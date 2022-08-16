@@ -1,0 +1,8 @@
+﻿@using QnA.Models.Shared;
+@model AdminViewModel;
+@Html.Partial("_Notification", Model.Notification)
+<div class="row">
+    <div class="col-sm-12">
+        @Html.Partial("_QuestionsGrid", Model.QuestionsGrid)
+    </div>
+</div>

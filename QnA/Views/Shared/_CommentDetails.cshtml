@@ -1,0 +1,29 @@
+﻿@model QnA.Models.Shared.CommentDetailsViewModel
+@if (Model.Comments.Any())
+{
+    <h6 class="card-subtitle mb-2 text-muted">Comments: </h6>
+    <ul class="list-group list-group-flush">
+        @foreach(var comment in Model.Comments)
+        {
+            <li class="list-group-item">
+                <strong class="text-secondary">
+                    @comment.User
+                </strong>
+                @comment.Comment
+            </li>    
+        }
+    </ul>
+}
+<form asp-action="AddComment" asp-controller="Question">
+    @*
+        override for @name in @html helpers not working here, so lets bind model manually
+    *@
+    <input type="hidden" name="QuestionId" value="@Model.AddComment.QuestionId"/>
+    <input type="hidden" name="AnswerId" value="@Model.AddComment.AnswerId"/>
+    <div class="input-group mb-3">
+        <input class="form-control" name="Comment" placeholder="Add comment"/> 
+        <div class="input-group-append">
+            <input type="submit" class="btn btn-outline-secondary" value="Comment">
+        </div>
+    </div>
+ </form>

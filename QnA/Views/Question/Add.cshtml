@@ -1,0 +1,32 @@
+﻿@using QnA.Models.Question
+@model AddQuestionViewModel
+<div class="row">
+    <div class="col-sm-12">
+        <form asp-action="Add" asp-controller="Question" method="post">
+            <div class="form-row">
+                <div class="form-group col-sm-12">
+                    @Html.LabelFor(x => x.Title)
+                    @Html.TextBoxFor(x => x.Title, new {@class="form-control"})
+                    @Html.ValidationMessageFor(x => x.Title)
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-12">
+                    @Html.LabelFor(x => x.Text)
+                    @Html.TextAreaFor(x => x.Text, new {@class="form-control"})
+                    @Html.ValidationMessageFor(x => x.Text)
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-12">
+                    @Html.LabelFor(x => x.TagIds)
+                    @Html.DropDownListFor(x => x.TagIds, Model.TagOptions, new { @class="form-control", multiple = "multiple"})
+                    @Html.ValidationMessageFor(x => x.TagIds)
+                </div>
+            </div>
+            <div class="form-row mt-4">
+                <input type="submit" value="Submit" class="btn btn-primary"/>
+            </div>
+        </form>
+    </div>
+</div>

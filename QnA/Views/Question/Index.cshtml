@@ -1,0 +1,160 @@
+﻿@using QnA.Enums;
+@using QnA.Models.Question;
+@model QuestionViewModel
+@Html.Partial("_Notification", Model.Notification)
+<div class="row mb-2">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>@Model.User</h5>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">@Model.Title</h3>
+                <p class="card-text">@Model.Text</p>
+                @if (Model.Tags.Any())
+                {
+                    <h6 class="card-subtitle mb-2 text-muted">Tags: </h6>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var tag in Model.Tags)
+                        {
+                            <li class="list-group-item">@tag</li>
+                        }
+                    </ul>
+                }
+                @Html.Partial("_CommentDetails", Model.CommentDetails)
+            </div>
+            <div style="gap: 0.5rem;" class=" card-footer">
+                <form asp-controller="Question" asp-action="Vote" class="d-flex align-items-center" method="post">
+                    @Html.HiddenFor(x => x.QuestionId)
+                    <button class="btn font-weight-bold btn-sm @(Model.CurrentUserVoteType == VoteType.Up ? "btn-success" : "btn-outline-success")" value="@VoteType.Up" name="VoteType">
+                        &#8593;
+                    </button>
+                    <h6 class="text-success mb-0 mr-1">+@Model.UpVoteCount</h6>
+                    <h6 class="text-danger mb-0 mr-1">-@Model.DownVoteCount</h6>
+                    <button class="btn font-weight-bold btn-sm @(Model.CurrentUserVoteType == VoteType.Down ? "btn-danger" : "btn-outline-danger")" value="@VoteType.Down" name="VoteType">
+                        &#8595;
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Answer this question</h3>
+                <form asp-action="AddAnswer" asp-controller="Question" method="post">
+                    @Html.HiddenFor(x => x.QuestionId)
+                    <div class="form-row">
+                        <div class="form-group col-sm-12">
+                            @Html.LabelFor(x => x.Answer)
+                            @Html.TextAreaFor(x => x.Answer, new {@class="form-control", @required="true"})
+                            @Html.ValidationMessageFor(x => x.Answer)
+                        </div>
+                    </div>
+                    <div class="form-row mt-4">
+                        <div class="form-group col-sm-12">
+                            <input type="submit" value="Submit" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@if (Model.AcceptedAnswer != null)
+{
+    <div class="row mb-2">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Accepted Answer</h3>
+                    <div class="card-columns">
+                        <div class="card mb-1">
+                            <div class="card-header">
+                                <h5>@Model.AcceptedAnswer.User</h5>
+                            </div>
+                            <div class="card-body">
+                                @Model.AcceptedAnswer.Answer
+                                @Html.Partial("_CommentDetails", @Model.AcceptedAnswer.CommentDetails)
+                            </div>
+                            <div style="gap: 1rem;" class="d-flex card-footer align-items-center">
+                                <form asp-controller="Question" asp-action="Vote" class="d-flex align-items-center" method="post">
+                                    @Html.HiddenFor(x => x.QuestionId)
+                                    @Html.Hidden("AnswerId", @Model.AcceptedAnswer.AnswerId)
+                                    <button class="btn font-weight-bold btn-sm @(@Model.AcceptedAnswer.CurrentUserVoteType == VoteType.Up ? "btn-success" : "btn-outline-success")" value="@VoteType.Up" name="VoteType">
+                                        &#8593;
+                                    </button>
+                                    <h6 class="text-success mb-0">+@Model.AcceptedAnswer.UpVoteCount</h6>
+                                    <h6 class="text-danger mb-0">-@Model.AcceptedAnswer.DownVoteCount</h6>
+                                    <button class="btn font-weight-bold btn-sm @(@Model.AcceptedAnswer.CurrentUserVoteType == VoteType.Down ? "btn-danger" : "btn-outline-danger")" value="@VoteType.Down" name="VoteType">
+                                        &#8595;
+                                    </button>
+                                </form>
+                                @if (Model.IsCurrentUserAuthor == true) @* With null check *@
+                                {
+                                    <form asp-controller="Question" asp-action="AcceptAnswer">
+                                        @Html.Hidden("AnswerId", @Model.AcceptedAnswer.AnswerId)
+                                        <button class="btn font-weight-bold btn-sm btn-outline-secondary" value="@VoteType.Down" name="VoteType">
+                                            Accept Answer
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (Model.Answers.Any())
+{
+    <div class="row mb-2">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Answers</h3>
+                    <div class="card-columns">
+                        @foreach (var answer in Model.Answers)
+                        {
+                            <div class="card mb-1">
+                                <div class="card-header">
+                                    <h5>@answer.User</h5>
+                                </div>
+                                <div class="card-body">
+                                    @answer.Answer
+                                    @Html.Partial("_CommentDetails", answer.CommentDetails)
+                                </div>
+                                <div style="gap: 1rem;" class="d-flex card-footer align-items-center">
+                                    <form asp-controller="Question" asp-action="Vote" class="d-flex align-items-center" method="post">
+                                        @Html.HiddenFor(x => x.QuestionId)
+                                        @Html.Hidden("AnswerId", answer.AnswerId)
+                                        <button class="btn font-weight-bold btn-sm @(answer.CurrentUserVoteType == VoteType.Up ? "btn-success" : "btn-outline-success")" value="@VoteType.Up" name="VoteType">
+                                            &#8593;
+                                        </button>
+                                        <h6 class="text-success mb-0">+@answer.UpVoteCount</h6>
+                                        <h6 class="text-danger mb-0">-@answer.DownVoteCount</h6>
+                                        <button class="btn font-weight-bold btn-sm @(answer.CurrentUserVoteType == VoteType.Down ? "btn-danger" : "btn-outline-danger")" value="@VoteType.Down" name="VoteType">
+                                            &#8595;
+                                        </button>
+                                    </form>
+                                    @if (Model.IsCurrentUserAuthor == true) @* With null check *@
+                                    {
+                                        <form asp-controller="Question" asp-action="AcceptAnswer">
+                                            @Html.Hidden("AnswerId", answer.AnswerId)
+                                            <button class="btn font-weight-bold btn-sm btn-outline-secondary" value="@VoteType.Down" name="VoteType">
+                                                Accept Answer
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

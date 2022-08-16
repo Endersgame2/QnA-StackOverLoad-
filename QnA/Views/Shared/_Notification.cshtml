@@ -1,0 +1,7 @@
+﻿@model QnA.Models.Shared.NotificationViewModel
+@if(!string.IsNullOrEmpty(Model.Message) && !string.IsNullOrEmpty(Model.MessageClass))
+{
+    <div class="alert @Model.MessageClass" role="alert">
+        @Model.Message
+    </div>
+}

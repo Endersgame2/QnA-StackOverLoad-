@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@using QnA.Enums; 
+@model IndexViewModel
+<div class="row">
+    <div class="col-sm-2">
+        <form asp-controller="Home" asp-action="Index" method="get">
+            <div class="form-row">
+                <div class="form-group col-sm-12">
+                    @Html.LabelFor(x => x.OrderMethod);
+                    @Html.DropDownListFor(x => x.OrderMethod, @Html.GetEnumSelectList<OrderMethod>(), new {@class="form-control"})
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-12">
+                    @Html.LabelFor(x => x.PageNumber)
+                    @Html.TextBoxFor(x => x.PageNumber, new {@class="form-control", @type="number"})
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-12">
+                    @Html.LabelFor(x => x.TagId)
+                    @Html.DropDownListFor(x => x.TagId, Model.TagOptions, new { @class="form-control"})
+                    @Html.ValidationMessageFor(x => x.TagId)
+                </div>
+            </div>
+            <div class="form-row mt-1">
+                <div class="form-group col-sm-12">
+                    <input type="submit" value="Go" class="w-100 btn btn-primary"/>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-9">
+        @Html.Partial("_QuestionsGrid", Model.QuestionsGrid)
+     </div>
+</div>
